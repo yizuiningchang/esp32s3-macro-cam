@@ -1,0 +1,43 @@
+# ============================================================
+# 项目编译配置默认值（ESP32-S3-CAM-OV5640）
+# 依据：��官方示例 sdkconfig.defaults
+# ============================================================
+
+# ---- 目标芯片 ----
+CONFIG_IDF_TARGET="esp32s3"
+
+# ---- Flash：板载 16MB，QIO 模式 ----
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+
+# ---- PSRAM：叠封 8MB OPI PSRAM，用作 JPEG 帧缓冲 ----
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+CONFIG_SPIRAM_FETCH_INSTRUCTIONS=y
+CONFIG_SPIRAM_RODATA=y
+
+# ---- 分区表：使用工程根目录的 partitions.csv ----
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+CONFIG_PARTITION_TABLE_FILENAME="partitions.csv"
+
+# ---- 串口：115200 bps----
+CONFIG_ESP_CONSOLE_UART_BAUDRATE=115200
+
+# ---- 性能：240MHz + 性能优先编译 ----
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+
+# ---- 应用主任务栈 ----
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+
+# ---- TF 卡挂载点（BSP 使用）----
+CONFIG_BSP_SD_MOUNT_POINT="/sdcard"
+
+# ---- FATFS 长文件名 ----
+# 照片名为 IMG_%06u.jpg（12 字符主名），超出 8.3 短名限制，
+# 必须启用 LFN，否则文件名会被截断/改写，序号命名失效。
+# 仅 LFN 支持（无中文文件名需求），选 HEAP 版避免占用任务栈。
+CONFIG_FATFS_LFN_HEAP=y
+CONFIG_FATFS_MAX_LFN=255

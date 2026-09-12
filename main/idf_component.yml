@@ -1,0 +1,8 @@
+## 组件依赖清单
+## 由 ESP-IDF 组件管理器在 build 时自动下载到 managed_components/
+dependencies:
+  idf: ">=5.5"
+
+  # 微雪官方板级支持包：提供 I2C / 扩展IO(CH32V003) / TF卡 / 摄像头引脚 / ES8311 音频初始化
+  # 注意：该 BSP 强制依赖 lvgl + esp_lvgl_adapter + LCD/触摸驱动，本项目虽不用屏幕也会被编译进来
+  waveshare/esp32_s3_cam_ovxxxx: "^1.0.0"

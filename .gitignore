@@ -1,0 +1,22 @@
+# 构建产物
+build/
+
+# ESP-IDF 本地备份文件（sdkconfig 本体**入库**：它是实测通过的配置，
+# 且 DEVELOPMENT_NOTES.md §3 描述的 QIO/DIO 状态以此文件为准，见其警告说明）
+sdkconfig.old
+sdkconfig.defaults.old
+
+# 组件管理器下载的组件（由 idf_component.yml + dependencies.lock 可复原）
+managed_components/
+
+# 编辑器临时文件（.vscode/ **入库**：settings.json 的 customExtraVars 与
+# launch.json 的 JTAG 调试配置是环境搭建的核心成果，勿忽略）
+.clangd
+*.code-workspace
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 调试工具抓取的临时串口原始数据（tools/serial_capture.py 等产物）
+_tmp_*.bin
