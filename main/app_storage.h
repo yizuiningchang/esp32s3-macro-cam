@@ -16,8 +16,16 @@
 extern "C" {
 #endif
 
-/** @brief 挂载 TF 卡（FAT32），并确保 /DCIM 目录存在 */
+/** @brief 挂载 TF 卡（FAT32），并确保 /DCIM 目录存在；随后按卡上已有照片对齐序号 */
 esp_err_t app_storage_mount(void);
+
+/**
+ * @brief 扫描 /DCIM 下 IMG_*.jpg，返回最大序号（无则 0）
+ *
+ * 用于挂卡后把 NVS 里的 file_seq 对齐到"卡上最大序号+1"，
+ * 避免 NVS 被清/换卡后重新从 1 编号而覆盖历史照片。
+ */
+uint32_t app_storage_scan_max_seq(void);
 
 /** @brief 卸载 TF 卡（深睡前必须调用） */
 esp_err_t app_storage_unmount(void);

@@ -4,6 +4,7 @@
  */
 #include "app_storage.h"
 
+#include <dirent.h>
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -23,11 +24,57 @@ static const char *TAG = "storage";
 #define WRITE_RETRY    2
 
 /** 挂卡重试：TF 卡上电后需要一定稳定时间，接触不良/上电时序偏紧时
- *  首次 CMD1 常报 ESP_ERR_TIMEOUT(0x107)。重试可显著提高一次成功率。 */
+ *  首次 CMD1 常报 ESP_ERR_TIMEOUT(0x107)。重试可显著提高一次成功率。
+ *  间隔取 50 ms（§4.1：挂卡失败重试间隔 50 ms），
+ *  既给卡留稳定时间又不显著拉长唤醒总时长。 */
 #define MOUNT_RETRY        3
-#define MOUNT_RETRY_DELAY  100   /* ms */
+#define MOUNT_RETRY_DELAY  50    /* ms */
 
 static bool s_mounted = false;
+static bool s_seq_scanned = false;   /**< 本次上电会话是否已做过序号扫卡对齐 */
+
+/** 解析 "IMG_%u.jpg"（忽略前导零），成功返回 true 并回填序号 */
+static bool parse_img_seq(const char *name, uint32_t *out)
+{
+    if (strncmp(name, "IMG_", 4) != 0) {
+        return false;
+    }
+    const char *p = name + 4;
+    if (*p < '0' || *p > '9') {
+        return false;
+    }
+    uint32_t n = 0;
+    while (*p >= '0' && *p <= '9') {
+        n = n * 10 + (uint32_t)(*p - '0');
+        if (n > 99999999u) {
+            return false;
+        }
+        p++;
+    }
+    if (strcmp(p, ".jpg") != 0) {
+        return false;
+    }
+    *out = n;
+    return true;
+}
+
+uint32_t app_storage_scan_max_seq(void)
+{
+    uint32_t max_seq = 0;
+    DIR *d = opendir(DCIM_DIR);
+    if (d == NULL) {
+        return 0;
+    }
+    struct dirent *e;
+    while ((e = readdir(d)) != NULL) {
+        uint32_t n = 0;
+        if (parse_img_seq(e->d_name, &n) && n > max_seq) {
+            max_seq = n;
+        }
+    }
+    closedir(d);
+    return max_seq;
+}
 
 esp_err_t app_storage_mount(void)
 {
@@ -56,6 +103,24 @@ esp_err_t app_storage_mount(void)
     /* 确保 /DCIM 存在 */
     if (mkdir(DCIM_DIR, 0775) != 0 && errno != EEXIST) {
         ESP_LOGW(TAG, "创建目录 %s 失败：errno=%d", DCIM_DIR, errno);
+    }
+
+    /* 序号对齐：NVS 被清过/换卡后，计数器可能小于卡上已有最大序号，
+     * 若不抬升会覆盖历史照片（REQ）。这里把 file_seq 抬到"卡上最大序号+1"。
+     * v1.7 性能优化：对齐只在**本次上电会话的首次挂卡**执行（遍历 DCIM 实测 ~600 ms）；
+     * 会话内连续拍照时 NVS 序号刚对齐过、且每次写卡成功即持久化，无需重复扫卡。
+     * 上电/深睡唤醒复位本变量，每个会话自然恢复"首次必扫"的防覆盖语义。 */
+    if (!s_seq_scanned) {
+        uint32_t card_max = app_storage_scan_max_seq();
+        uint32_t cfg_seq = app_config_get()->file_seq;
+        if (card_max >= cfg_seq) {
+            ESP_LOGI(TAG, "卡上已有最大 IMG_%06u，序号由 NVS(%u) 抬升至 %u 以避免覆盖",
+                     (unsigned)card_max, (unsigned)cfg_seq, (unsigned)(card_max + 1));
+            app_config_set_file_seq(card_max + 1);
+        } else {
+            ESP_LOGI(TAG, "卡上最大 IMG_%06u < NVS 序号 %u，沿用 NVS", (unsigned)card_max, (unsigned)cfg_seq);
+        }
+        s_seq_scanned = true;
     }
 
     uint64_t total = 0, freeb = 0;

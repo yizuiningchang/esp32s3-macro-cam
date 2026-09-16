@@ -25,6 +25,12 @@ CONFIG_PARTITION_TABLE_FILENAME="partitions.csv"
 # ---- 串口：115200 bps----
 CONFIG_ESP_CONSOLE_UART_BAUDRATE=115200
 
+# ---- 串口命令行（REQ）：主控台改到 USB-Serial-JTAG ----
+# 本板无 USB-UART 桥片，用户只连 COM5(USB-JTAG)；次级 console 是"仅输出"（官方文档明确），
+# 要支持命令行"输入/REPL"必须把 primary console 设为 USB_SERIAL_JTAG。
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+CONFIG_ESP_CONSOLE_SECONDARY_NONE=y
+
 # ---- 性能：240MHz + 性能优先编译 ----
 CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
 CONFIG_COMPILER_OPTIMIZATION_PERF=y

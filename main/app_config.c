@@ -20,11 +20,20 @@ static const char *TAG = "cfg";
  * 用 (uint8_t)FRAMESIZE_UXGA 让编译器从枚举取值（当前 v2.1.7 下为 15 = 1600x1200）。
  * 注意：旧版 esp32-camera 里 UXGA 是 13，中间插入过 128X128 / 320X320 两档。 */
 #define DEF_FRAME_SIZE    ((uint8_t)FRAMESIZE_UXGA)
-#define DEF_AF_SETTLE_MS  500
+/* Phase 1 定焦模组：无对焦动作，按下即拍。
+ * AF 模组到货后经串口 `cfg set af_settle_ms 500` 启用（键保留）。
+ * ⚠ 改此默认值后必须清一次 NVS 才生效：`esptool erase_region 0x9000 0x6000`
+ *   （load_*() 只在键不存在时写默认值，旧值会一直留在 NVS 里，见 DEVELOPMENT_NOTES 4.6） */
+#define DEF_AF_SETTLE_MS  0
 #define DEF_LOW_SPACE_PCT 5
 #define DEF_FILE_SEQ      1
 #define DEF_AUDIO_VOL     65
 #define DEF_AUDIO_MUTE    0
+/* 统一保持唤醒时长（= 会话"无操作超时"，v1.6）：默认 5 分钟。
+ * 上电 / 唤醒 / 每次拍照（成功或失败）都重置计时；无操作满此时限 → 前 10 s 播「即将休眠」→ 播完入睡。
+ * 量产形态支持修改（现经串口 `cfg set hold_awake_s <秒>`，NVS 持久化）。
+ * ⚠ 改此默认值后必须清一次 NVS（键已存在时不会覆盖），见 DEVELOPMENT_NOTES 4.6 */
+#define DEF_HOLD_AWAKE_S  300
 
 static nvs_handle_t s_nvs;
 static app_cfg_t    s_cfg;
@@ -36,6 +45,7 @@ static const char *KEY_LOW_SPACE_PCT = "low_space_pct";
 static const char *KEY_FILE_SEQ      = "file_seq";
 static const char *KEY_AUDIO_VOL     = "audio_vol";
 static const char *KEY_AUDIO_MUTE    = "audio_mute";
+static const char *KEY_HOLD_AWAKE_S  = "hold_awake_s";
 
 /** 读 u8，缺失/类型不符时写入默认值 */
 static uint8_t load_u8(const char *key, uint8_t def)
@@ -90,15 +100,16 @@ esp_err_t app_config_init(void)
     s_cfg.file_seq      = load_u32(KEY_FILE_SEQ, DEF_FILE_SEQ);
     s_cfg.audio_vol     = load_u8(KEY_AUDIO_VOL, DEF_AUDIO_VOL);
     s_cfg.audio_mute    = load_u8(KEY_AUDIO_MUTE, DEF_AUDIO_MUTE);
+    s_cfg.hold_awake_s  = load_u16(KEY_HOLD_AWAKE_S, DEF_HOLD_AWAKE_S);
 
     /* 若本轮写入了默认值，统一提交一次 */
     nvs_commit(s_nvs);
 
-    ESP_LOGI(TAG, "配置载入完成：quality=%u frame_size=%u af_settle=%ums low_space=%u%% seq=%u vol=%u mute=%u",
+    ESP_LOGI(TAG, "配置载入完成：quality=%u frame_size=%u af_settle=%ums low_space=%u%% seq=%u vol=%u mute=%u hold_awake=%us",
              (unsigned)s_cfg.jpeg_quality, (unsigned)s_cfg.frame_size,
              (unsigned)s_cfg.af_settle_ms, (unsigned)s_cfg.low_space_pct,
              (unsigned)s_cfg.file_seq, (unsigned)s_cfg.audio_vol,
-             (unsigned)s_cfg.audio_mute);
+             (unsigned)s_cfg.audio_mute, (unsigned)s_cfg.hold_awake_s);
     return ESP_OK;
 }
 
@@ -132,6 +143,9 @@ esp_err_t app_config_set(const char *key, uint32_t value)
     } else if (strcmp(key, KEY_AUDIO_MUTE) == 0) {
         s_cfg.audio_mute = (uint8_t)value;
         err = nvs_set_u8(s_nvs, KEY_AUDIO_MUTE, s_cfg.audio_mute);
+    } else if (strcmp(key, KEY_HOLD_AWAKE_S) == 0) {
+        s_cfg.hold_awake_s = (uint16_t)value;
+        err = nvs_set_u16(s_nvs, KEY_HOLD_AWAKE_S, s_cfg.hold_awake_s);
     } else {
         ESP_LOGE(TAG, "未知配置键：%s", key);
         return ESP_ERR_INVALID_ARG;
@@ -157,6 +171,13 @@ esp_err_t app_config_next_file_seq(uint32_t *out)
     return nvs_commit(s_nvs);
 }
 
+esp_err_t app_config_set_file_seq(uint32_t seq)
+{
+    s_cfg.file_seq = seq;
+    ESP_RETURN_ON_ERROR(nvs_set_u32(s_nvs, KEY_FILE_SEQ, s_cfg.file_seq), TAG, "写序号失败");
+    return nvs_commit(s_nvs);
+}
+
 esp_err_t app_config_reset(void)
 {
     esp_err_t err = nvs_erase_all(s_nvs);
@@ -175,6 +196,7 @@ esp_err_t app_config_reset(void)
     s_cfg.file_seq      = DEF_FILE_SEQ;
     s_cfg.audio_vol     = DEF_AUDIO_VOL;
     s_cfg.audio_mute    = DEF_AUDIO_MUTE;
+    s_cfg.hold_awake_s  = DEF_HOLD_AWAKE_S;
 
     ESP_LOGI(TAG, "配置已恢复默认");
     return ESP_OK;

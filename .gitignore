@@ -5,6 +5,8 @@ build/
 # 且 DEVELOPMENT_NOTES.md §3 描述的 QIO/DIO 状态以此文件为准，见其警告说明）
 sdkconfig.old
 sdkconfig.defaults.old
+# 手工留档的 sdkconfig 时间戳备份（如 sdkconfig.bak-20260913）：本地留存，不入库
+sdkconfig.bak-*
 
 # 组件管理器下载的组件（由 idf_component.yml + dependencies.lock 可复原）
 managed_components/
