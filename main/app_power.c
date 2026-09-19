@@ -7,6 +7,7 @@
 #include "app_audio.h"
 #include "app_camera.h"
 #include "app_led.h"
+#include "app_light.h"
 #include "app_storage.h"
 #include "bsp/esp-bsp.h"
 #include "driver/gpio.h"
@@ -179,7 +180,10 @@ esp_err_t app_power_prepare_sleep(void)
     /* 6) 熄灭 USER LED（EXIO6=0，睡眠=灭；v1.2 §4.9） */
     app_led_show(LED_MODE_OFF);
 
-    ESP_LOGI(TAG, "降流完成：PWDN 断言 / TF 卸载 / 功放关 / ES8311 低功耗 / LED 灭");
+    /* 7) 补光：占空比清零 + 控制脚固定低电平并 hold（防深睡期间栅极悬空导致灯微亮漏电） */
+    app_light_prepare_sleep();
+
+    ESP_LOGI(TAG, "降流完成：PWDN 断言 / TF 卸载 / 功放关 / ES8311 低功耗 / LED 灭 / 补光脚 hold 低");
     return ESP_OK;
 }
 
