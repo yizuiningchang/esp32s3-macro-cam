@@ -23,6 +23,7 @@
 #include "app_cmd.h"
 #include "app_config.h"
 #include "app_led.h"
+#include "app_light.h"
 #include "app_power.h"
 #include "app_session.h"
 #include "app_storage.h"
@@ -116,11 +117,14 @@ static cap_result_t run_capture_flow(char *out_path, size_t out_path_len)
     t_step = esp_timer_get_time();
     wdt_feed();
 
-    /* --- 4) 快门音 + 抓帧（v1.7）：快门音在摄像头开始拍摄时播（需求方定稿）；
-     *         播放阻塞期间摄像头 DMA 持续出流，等效"丢帧等待 AE 收敛"，
-     *         故 app_camera_capture 内仅 init 后首张单独丢帧（其余张直接抓）--- */
+    /* --- 4) 补光 + 快门音 + 抓帧（v1.9：补光可选，REQ） ---
+     *  补光先亮：脉冲模式下等待 `light_lead_ms` 让 AE 收敛到亮场（灯亮 → 曝光降 → 噪声降）；
+     *  随后播快门音（需求方定稿时机），播放阻塞期间摄像头 DMA 持续出流，等效"丢帧等待 AE 收敛"，
+     *  故 app_camera_capture 内仅 init 后首张单独丢帧（其余张直接抓）。 */
+    app_light_before_capture();
     app_audio_play(TONE_SHUTTER);   /* Canon A1 真实快门「咔-嚓」（CC0，v1.7） */
     camera_fb_t *fb = app_camera_capture();
+    app_light_after_capture();      /* 抓帧拿到即灭灯（写卡不需要光） */
     if (fb == NULL) {
         ESP_LOGE(TAG, "抓帧失败");
         return CAP_ERR_CAMERA;
@@ -129,6 +133,7 @@ static cap_result_t run_capture_flow(char *out_path, size_t out_path_len)
     ESP_LOGI(TAG, "抓帧成功：%u 字节 %ux%u %s",
              (unsigned)fb->len, (unsigned)fb->width, (unsigned)fb->height,
              fb->format == PIXFORMAT_JPEG ? "JPEG" : "非JPEG");
+    app_camera_log_ae();   /* v1.9：本帧 AE 落点（曝光/增益）——竖纹归因取证 */
     t_step = esp_timer_get_time();
 
     /* --- 5) 写卡 --- */
@@ -222,6 +227,11 @@ void app_main(void)
     /* USER LED（EXIO6），置为常亮工作态；失败仅告警不影响拍照 */
     if (app_led_init() != ESP_OK) {
         ESP_LOGW(TAG, "USER LED 初始化失败（不影响拍照）");
+    }
+
+    /* 外置补光（LCD 座空闲 GPIO + LEDC PWM）；默认 light_en=0 不点灯，失败不影响拍照 */
+    if (app_light_init() != ESP_OK) {
+        ESP_LOGW(TAG, "补光通路初始化失败（不影响拍照；检查 light_gpio 配置）");
     }
 
     /* 串口命令行（REQ，调试/维护）：注册 snap / sleep 回调 */
