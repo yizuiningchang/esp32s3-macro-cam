@@ -159,4 +159,8 @@ esp32s3-macro-cam/
 
 ## 许可
 
-[Apache-2.0](LICENSE)。`tools/patches/` 下的 `esp32-camera` 补丁沿用上游 Apache-2.0 许可，详见该目录说明。
+[Apache License 2.0](LICENSE)。
+
+允许商业使用、修改、分发与闭源衍生，条件是保留版权与许可声明、标注所做修改。同时授予明确的专利许可，并禁止使用本项目名称或作者名义为衍生品背书。
+
+`tools/patches/cam_hal.c.patched` 是 `espressif/esp32-camera` 的衍生作品，沿用同一许可。第三方组件清单与版权声明见 [NOTICE](NOTICE)。
