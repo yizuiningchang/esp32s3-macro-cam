@@ -3,7 +3,7 @@
 """
 gen_tones.py — 合成 esp32s3_macro_cam 设备提示音，生成 main/app_tones.h
 
-规格（��v1.7）：16 kHz / 16 bit / 单声道 PCM，小端 int16，内嵌 Flash。
+规格：16 kHz / 16 bit / 单声道 PCM，小端 int16，内嵌 Flash。
 7 种提示音，总时长约 2.75 s，约 88 KB。
 
 v1.7（2026-09-14，需求方选定）：

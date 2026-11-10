@@ -81,7 +81,7 @@ uint16_t app_power_battery_adc(void);
 /**
  * @brief 电量是否"极低"
  *
- * 要求失败兜底入睡需"电量非极低"，但电池分压比与 ADC 量程**尚未标定**，
+ * 失败兜底入睡需"电量非极低"，但电池分压比与 ADC 量程**尚未标定**，
  * 故判定阈值以 `APP_BAT_LOW_ADC` 宏表示，默认 0 = 判定禁用（只记录原始 ADC）。
  * 标定后改该宏并把实测值补进 DEVELOPMENT_NOTES。
  */

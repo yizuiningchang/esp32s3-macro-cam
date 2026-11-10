@@ -1,6 +1,6 @@
 # ============================================================
 # 项目编译配置默认值（ESP32-S3-CAM-OV5640）
-# 依据：��官方示例 sdkconfig.defaults
+# 依据：官方示例 sdkconfig.defaults
 # ============================================================
 
 # ---- 目标芯片 ----
@@ -22,7 +22,7 @@ CONFIG_PARTITION_TABLE_CUSTOM=y
 CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
 CONFIG_PARTITION_TABLE_FILENAME="partitions.csv"
 
-# ---- 串口：115200 bps----
+# ---- 串口：115200 bps ----
 CONFIG_ESP_CONSOLE_UART_BAUDRATE=115200
 
 # ---- 串口命令行（REQ）：主控台改到 USB-Serial-JTAG ----
