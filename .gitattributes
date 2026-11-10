@@ -1,0 +1,7 @@
+# 二进制文件：禁止换行符转换与文本 diff
+*.wav   binary
+*.bin   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.cr3   binary

@@ -1,18 +1,21 @@
 # 构建产物
 build/
+.cache/
 
-# ESP-IDF 本地备份文件（sdkconfig 本体**入库**：它是实测通过的配置，
-# 且 DEVELOPMENT_NOTES.md §3 描述的 QIO/DIO 状态以此文件为准，见其警告说明）
+# 本地配置备份（sdkconfig 本体入库：它是实测通过的配置）
 sdkconfig.old
 sdkconfig.defaults.old
-# 手工留档的 sdkconfig 时间戳备份（如 sdkconfig.bak-20260913）：本地留存，不入库
 sdkconfig.bak-*
 
-# 组件管理器下载的组件（由 idf_component.yml + dependencies.lock 可复原）
+# 托管组件：由 idf_component.yml + dependencies.lock 复原
+# 注意：首次编译后需执行 `python tools/apply_patch.py` 打摄像头补丁
 managed_components/
 
-# 编辑器临时文件（.vscode/ **入库**：settings.json 的 customExtraVars 与
-# launch.json 的 JTAG 调试配置是环境搭建的核心成果，勿忽略）
+# 补丁应用时自动备份的原厂文件
+*.c.orig
+
+# 编辑器与 IDE 配置（含本机路径，不入库）
+.vscode/
 .clangd
 *.code-workspace
 
@@ -20,5 +23,6 @@ managed_components/
 .DS_Store
 Thumbs.db
 
-# 调试工具抓取的临时串口原始数据（tools/serial_capture.py 等产物）
+# 串口调试抓取的临时数据
 _tmp_*.bin
+logs/
