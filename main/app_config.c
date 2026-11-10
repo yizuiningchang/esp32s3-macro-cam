@@ -56,7 +56,7 @@ static const char *TAG = "cfg";
 #define DEF_AEC_VALUE     300     /* 仅 ae_lock=1 时使用 */
 #define DEF_AGC_GAIN      0       /* 仅 ae_lock=1 时使用 */
 
-/* ---- 外置补光默认值（REQ，2026-09-19）------------------------------------
+/* ---- 外置补光默认值（2026-09-19）------------------------------------
  * light_en 默认 0 = 不点灯，保证 Phase 1 拍照行为与画质口径完全不变；
  * 灯板接好后再 `cfg set light_en 1` 打开（NVS 持久化，掉电保留）。
  * light_gpio 默认 5 = LCD 18pin 排线座 pin4（原理图 LCD_SCK，无屏时空闲）。 */
@@ -95,7 +95,7 @@ static const char *KEY_WB_LOCK       = "wb_lock";
 static const char *KEY_SHARPNESS     = "sharpness";
 static const char *KEY_AEC_VALUE     = "aec_value";
 static const char *KEY_AGC_GAIN      = "agc_gain";
-/* 外置补光键（REQ） */
+/* 外置补光键 */
 static const char *KEY_LIGHT_EN      = "light_en";
 static const char *KEY_LIGHT_MODE    = "light_mode";
 static const char *KEY_LIGHT_LEVEL   = "light_level";
@@ -201,7 +201,7 @@ esp_err_t app_config_init(void)
     s_cfg.aec_value     = load_u16(KEY_AEC_VALUE, DEF_AEC_VALUE);
     s_cfg.agc_gain      = load_u8(KEY_AGC_GAIN, DEF_AGC_GAIN);
 
-    /* 外置补光（REQ） */
+    /* 外置补光 */
     s_cfg.light_en      = load_u8(KEY_LIGHT_EN, DEF_LIGHT_EN);
     s_cfg.light_mode    = load_u8(KEY_LIGHT_MODE, DEF_LIGHT_MODE);
     s_cfg.light_level   = load_u8(KEY_LIGHT_LEVEL, DEF_LIGHT_LEVEL);

@@ -8,7 +8,7 @@
  *   ├─ 长按 PWR(>1.5 s) → 播「即将休眠」→ **立即入睡**
  *   └─ 无操作满 `hold_awake_s`（默认 300 s）→ 剩余 10 s 播「即将休眠」→ **播完自动入睡**
  *
- * 按键语义（v1.6，��：深睡中**首次按键只唤醒、不拍照**（被消费），
+ * 按键语义：深睡中**首次按键只唤醒、不拍照**（被消费），
  * 之后再按才拍照；会话内可连续多拍，每次拍照都重置计时。
  *
  * 统一计时策略（v1.6）：时长取自 NVS `hold_awake_s`，由 `app_session` 模块提供，
@@ -46,10 +46,10 @@ static const char *TAG = "main";
  *  注意：深睡会切断 USB-Serial-JTAG，主机侧串口消失，属**预期行为**，不是故障。 */
 #define APP_DEBUG_KEEP_AWAKE 0
 
-/** 长按判定阈值：按住 ≥ 此值 → 立即休眠（��v1.6；2026-09-17 定 1.5 s） */
+/** 长按判定阈值：按住 ≥ 此值 → 立即休眠 */
 #define APP_LONG_PRESS_MS 1500
 
-/** 睡眠预警提前量：会话剩余 ≤ 此值 → 播「即将休眠」（/ 4.9，v1.6） */
+/** 睡眠预警提前量：会话剩余 ≤ 此值 → 播「即将休眠」 */
 #define APP_SLEEP_WARN_S 10
 
 /** 单次拍照结果 */
@@ -61,7 +61,7 @@ typedef enum {
     CAP_ERR_WRITE,     /**< 写卡失败 */
 } cap_result_t;
 
-/** 距 t0 的毫秒数（��拍照各步骤耗时打点） */
+/** 距 t0 的毫秒数 */
 static inline uint32_t since_ms(int64_t t0)
 {
     return (uint32_t)((esp_timer_get_time() - t0) / 1000);
@@ -117,7 +117,7 @@ static cap_result_t run_capture_flow(char *out_path, size_t out_path_len)
     t_step = esp_timer_get_time();
     wdt_feed();
 
-    /* --- 4) 补光 + 快门音 + 抓帧（v1.9：补光可选，REQ） ---
+    /* --- 4) 补光 + 快门音 + 抓帧 ---
      *  补光先亮：脉冲模式下等待 `light_lead_ms` 让 AE 收敛到亮场（灯亮 → 曝光降 → 噪声降）；
      *  随后播快门音（需求方定稿时机），播放阻塞期间摄像头 DMA 持续出流，等效"丢帧等待 AE 收敛"，
      *  故 app_camera_capture 内仅 init 后首张单独丢帧（其余张直接抓）。 */
@@ -234,7 +234,7 @@ void app_main(void)
         ESP_LOGW(TAG, "补光通路初始化失败（不影响拍照；检查 light_gpio 配置）");
     }
 
-    /* 串口命令行（REQ，调试/维护）：注册 snap / sleep 回调 */
+    /* 串口命令行（调试/维护）：注册 snap / sleep 回调 */
     app_cmd_init();
     app_cmd_set_snap_handler(do_snap);
     app_cmd_set_sleep_handler(do_sleep);

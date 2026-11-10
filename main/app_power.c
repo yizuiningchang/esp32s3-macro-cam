@@ -55,7 +55,7 @@ esp_err_t app_power_prepare_button_wake(void)
     rtc_gpio_pulldown_dis(APP_BUTTON_PIN);
 
     /* ESP32-S3：低电平唤醒必须用 ANY_LOW。
-     * 原写 ESP_EXT1_WAKEUP_ALL_LOW，该枚举仅 ESP32 适用，需更正。 */
+     * 原设计使用 ESP_EXT1_WAKEUP_ALL_LOW，该枚举仅 ESP32 适用，需更正。 */
     esp_err_t err = esp_sleep_enable_ext1_wakeup_io(1ULL << APP_BUTTON_PIN, ESP_EXT1_WAKEUP_ANY_LOW);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "配置 ext1 唤醒失败：%s", esp_err_to_name(err));

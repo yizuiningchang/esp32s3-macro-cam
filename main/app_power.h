@@ -49,18 +49,18 @@ bool app_power_button_pressed(void);
 void app_power_wait_button_release(uint32_t timeout_ms);
 
 /**
- * @brief 等待按键释放，并判定是否"长按"（��v1.6）
+ * @brief 等待按键释放，并判定是否"长按"
  * @param long_ms 长按阈值（ms）
  * @return true = 按住时长达标（长按，可能仍未松手）；false = 阈值内已松手（短按）
  * @note 会话内用于区分：短按 = 拍照；长按 = 播「即将休眠」后立即休眠
  */
 bool app_power_wait_button_release_long(uint32_t long_ms);
 
-/** @brief 打印本次复位/唤醒原因（日志可追溯，异常#7） */
+/** @brief 打印本次复位/唤醒原因 */
 void app_power_log_wakeup_cause(void);
 
 /**
- * @brief 深睡前资源回收 + 板级外设降流（��REQ）
+ * @brief 深睡前资源回收 + 板级外设降流
  *
  * 顺序：释放摄像头驱动 → 断言摄像头 PWDN(EXIO3) → 卸载 TF 卡 →
  *       关功放(EXIO4=0) → ES8311 低功耗 → 熄灭 USER LED(EXIO6=0) → 刷日志。

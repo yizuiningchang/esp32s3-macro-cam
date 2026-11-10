@@ -79,7 +79,7 @@ static void cmd_help(void)
            "  cfg set <键> <值>   修改配置并写 NVS\n"
            "  cam show           回读摄像头实际生效的画质参数与 AE 落点\n"
            "  cam apply          把 NVS 画质参数下发到传感器（改完 cfg set 执行）\n"
-           "  light [on|off]     补光开关状态 / 手动点亮熄灭（REQ）\n"
+           "  light [on|off]     补光开关状态 / 手动点亮熄灭\n"
            "  light level <0-255> 现场调补光亮度（不写 NVS）\n"
            "  light pulse [ms]   试灯：亮 ms 毫秒后自动灭（默认 500）\n"
            "  light exp <0-255>  自检：写扩展芯片 PWM 寄存器（LCD_BL 脚）\n"
@@ -216,7 +216,7 @@ static void cmd_cfg(int argc, char **argv)
         printf("aec_value     = %u   # 锁定时曝光行 0..1200\n", (unsigned)c->aec_value);
         printf("agc_gain      = %u   # 锁定时增益档 0..30\n", (unsigned)c->agc_gain);
         printf("wb_lock       = %u   # 1=锁定白平衡\n", (unsigned)c->wb_lock);
-        printf("-- 外置补光（REQ）--\n");
+        printf("-- 外置补光--\n");
         printf("light_en      = %u   # 0=关（默认）1=拍照自动补光\n", (unsigned)c->light_en);
         printf("light_mode    = %u   # 0=拍照脉冲（默认）1=会话常亮\n", (unsigned)c->light_mode);
         printf("light_level   = %u   # 亮度 0..255（抓帧建议 255 满亮）\n", (unsigned)c->light_level);
@@ -268,7 +268,7 @@ static void cmd_cam(int argc, char **argv)
 }
 
 /**
- * @brief 补光命令（REQ）：现场试灯 / 自检，不改 NVS（除 cfg set light_*）
+ * @brief 补光命令：现场试灯 / 自检，不改 NVS（除 cfg set light_*）
  *
  *   light              显示当前状态
  *   light on | off     按 NVS 亮度点亮 / 熄灭

@@ -1,6 +1,6 @@
 /**
  * @file  app_light.c
- * @brief 外置补光（LED 灯板）控制模块实现（REQ 补光）
+ * @brief 外置补光（LED 灯板）控制模块实现（补光）
  *
  * 硬件前提（接线与选型见《补光方案_20260919.md》）：
  *   LCD 18pin 座 L3:pin4(GPIO5) → MOS 栅极；pin1(3V3)/pin3(GND) 供电（小电流）；

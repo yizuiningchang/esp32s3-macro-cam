@@ -1,6 +1,6 @@
 /**
  * @file  app_session.c
- * @brief 统一计时策略实现（/ 4.2 / 4.7，v1.6）
+ * @brief 统一计时策略实现
  */
 #include "app_session.h"
 

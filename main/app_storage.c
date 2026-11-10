@@ -25,7 +25,7 @@ static const char *TAG = "storage";
 
 /** 挂卡重试：TF 卡上电后需要一定稳定时间，接触不良/上电时序偏紧时
  *  首次 CMD1 常报 ESP_ERR_TIMEOUT(0x107)。重试可显著提高一次成功率。
- *  间隔取 50 ms（§4.1：挂卡失败重试间隔 50 ms），
+ *  间隔取 50 ms，
  *  既给卡留稳定时间又不显著拉长唤醒总时长。 */
 #define MOUNT_RETRY        3
 #define MOUNT_RETRY_DELAY  50    /* ms */
@@ -106,7 +106,7 @@ esp_err_t app_storage_mount(void)
     }
 
     /* 序号对齐：NVS 被清过/换卡后，计数器可能小于卡上已有最大序号，
-     * 若不抬升会覆盖历史照片（REQ）。这里把 file_seq 抬到"卡上最大序号+1"。
+     * 若不抬升会覆盖历史照片。这里把 file_seq 抬到"卡上最大序号+1"。
      * v1.7 性能优化：对齐只在**本次上电会话的首次挂卡**执行（遍历 DCIM 实测 ~600 ms）；
      * 会话内连续拍照时 NVS 序号刚对齐过、且每次写卡成功即持久化，无需重复扫卡。
      * 上电/深睡唤醒复位本变量，每个会话自然恢复"首次必扫"的防覆盖语义。 */
@@ -232,7 +232,7 @@ esp_err_t app_storage_save_jpeg(const uint8_t *data, size_t len, char *out_path,
         return err;
     }
 
-    /* 写卡成功 → 提交序号（��计数持久化保证唯一不覆盖） */
+    /* 写卡成功 → 提交序号 */
     uint32_t used = 0;
     err = app_config_next_file_seq(&used);
     if (err != ESP_OK) {

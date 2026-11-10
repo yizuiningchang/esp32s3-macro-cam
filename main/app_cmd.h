@@ -1,6 +1,6 @@
 /**
  * @file  app_cmd.h
- * @brief 串口命令行模块（/ REQ，调试与维护用）
+ * @brief 串口命令行模块
  *
  * 前置：主控台必须是 USB-Serial-JTAG（见 sdkconfig：CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y）。
  *       次级 console 仅输出，无法输入/REPL（ESP-IDF 官方文档明确）。

@@ -1,6 +1,6 @@
 /**
  * @file  app_audio.h
- * @brief 声音反馈模块（/ 4.9，REQ / REQ）
+ * @brief 声音反馈模块
  *
  * 音频通路：I2S(MCLK=GPIO10/BCLK=11/LRCK=12/DOUT=14) → ES8311 解码 → NS4150B 功放 → 喇叭。
  * 功放使能经扩展芯片 EXIO4(PA_CTRL)：1=开 / 0=关（上电默认关断）。

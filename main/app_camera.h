@@ -43,7 +43,7 @@ esp_err_t app_camera_deinit(void);
 /**
  * @brief 断言摄像头 PWDN（扩展芯片 EXIO3），深睡前调用以进一步降流
  *
- * / 4.2：官方 BSP 从未驱动该脚，故 EXIO3 极性为"待实测"，
+ * 官方 BSP 从未驱动该脚，故 EXIO3 极性为"待实测"，
  * 需以阶段 4 的深睡电流实测结果确认（宏见 app_camera.c）。
  */
 esp_err_t app_camera_power_down(void);

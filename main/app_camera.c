@@ -48,7 +48,7 @@ static const char *TAG = "camera";
 #define TUNE_SKIP_U8   0xFFu
 #define TUNE_SKIP_U16  0xFFFFu
 
-/* EXIO3 = 摄像头 PWDN（原理图 PIN OUT 表；��。
+/* EXIO3 = 摄像头 PWDN（原理图 PIN OUT 表）。
  * 官方 BSP 只把 EXIO0/1/2/4/5/6 配为输出，EXIO3 从未被驱动，故其有效电平
  * 在文档中标注为"待实测"。约定 OV5640 PWDN 高有效（=1 关断摄像头）。
  * 阶段 4 实测若深睡电流不降（或摄像头行为异常），把 CAM_PWDN_ACTIVE_LEVEL 改 0 重测。 */
@@ -393,7 +393,7 @@ esp_err_t app_camera_deinit(void)
     s_inited = false;
 
     /* 深睡前的 PWDN 断言由 app_power_prepare_sleep() 显式调用 app_camera_power_down()，
-     * 见/ 4.2（EXIO 映射以原理图 PIN OUT 表为准：EXIO3 = CAM PWDN）。 */
+     * （EXIO 映射以原理图 PIN OUT 表为准：EXIO3 = CAM PWDN）。 */
     ESP_LOGI(TAG, "摄像头已释放：%s", esp_err_to_name(err));
     return err;
 }
