@@ -1,0 +1,74 @@
+name: 编译或运行问题
+description: 编译失败、烧录异常、启动报错、功能不工作
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        提交前请先确认两件事：
+
+        - 已阅读 [部署指南](https://github.com/yizuiningchang/esp32s3-macro-cam/blob/main/docs/DEPLOYMENT.md)
+        - 已执行 `python tools/apply_patch.py` —— 跳过这步会导致极暗场景拍照存不下来
+
+  - type: dropdown
+    id: stage
+    attributes:
+      label: 问题出现在哪个阶段
+      options:
+        - 编译（idf.py build）
+        - 烧录（esptool / idf.py flash）
+        - 启动（上电无日志或异常重启）
+        - 拍照（按键无响应 / 存卡失败）
+        - 休眠与唤醒
+        - 其他
+    validations:
+      required: true
+
+  - type: input
+    id: idf_version
+    attributes:
+      label: ESP-IDF 版本
+      description: 执行 `idf.py --version` 的结果
+      placeholder: v5.5.1
+    validations:
+      required: true
+
+  - type: dropdown
+    id: patched
+    attributes:
+      label: 是否已执行 apply_patch.py
+      options:
+        - 已执行
+        - 未执行
+        - 不确定
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望行为与实际行为
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 串口日志
+      description: 从设备启动到出错位置的完整输出，不要只贴最后一行报错
+      render: shell
+      placeholder: 粘贴 idf.py monitor 的输出
+    validations:
+      required: false
