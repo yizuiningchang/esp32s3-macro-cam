@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 部署指南与常见问题
+    url: https://github.com/yizuiningchang/esp32s3-macro-cam/blob/main/docs/DEPLOYMENT.md
+    about: 环境搭建、补丁应用、五个必读的坑、FAQ
+  - name: 设计说明与已知限制
+    url: https://github.com/yizuiningchang/esp32s3-macro-cam/blob/main/docs/DESIGN.md
+    about: 系统架构、关键设计决策、未解决问题（近距失焦、深睡电流）
+  - name: 固件下载与版本说明
+    url: https://github.com/yizuiningchang/esp32s3-macro-cam/releases
+    about: 预编译固件、烧录方式、SHA256 校验
