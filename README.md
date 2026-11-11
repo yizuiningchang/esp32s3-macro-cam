@@ -1,5 +1,10 @@
 # ESP32-S3 微距拍摄终端
 
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![ESP-IDF](https://img.shields.io/badge/ESP--IDF-v5.5-E7352C.svg)](https://docs.espressif.com/projects/esp-idf/en/v5.5/)
+[![SoC](https://img.shields.io/badge/SoC-ESP32--S3-E7352C.svg)](https://www.espressif.com/en/products/socs/esp32-s3)
+[![Release](https://img.shields.io/github/v/release/yizuiningchang/esp32s3-macro-cam?label=release&color=2ea44f)](https://github.com/yizuiningchang/esp32s3-macro-cam/releases)
+
 面向近距离表面成像的低功耗手持终端固件。核心流程：**按键唤醒 → 拍照 → 存 TF 卡 → 声光反馈 → 自动深睡**。
 
 为「每天几十张、一次充电用两个月」的现场采集场景设计：常态深睡、按键即拍、无需联网、无需交互界面。
