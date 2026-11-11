@@ -1,0 +1,38 @@
+name: 功能建议
+description: 希望增加或改进的功能
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: scenario
+    attributes:
+      label: 你遇到的场景
+      description: 描述实际问题，而不是直接给方案——这样更容易判断该怎么改
+      placeholder: 我在……的时候，需要……，但当前固件……
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 期望的方案
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternative
+    attributes:
+      label: 考虑过的替代方案
+    validations:
+      required: false
+
+  - type: dropdown
+    id: contribute
+    attributes:
+      label: 是否愿意提交 PR
+      options:
+        - 愿意实现
+        - 可以提供思路，但没时间写
+        - 仅提建议
+    validations:
+      required: false
