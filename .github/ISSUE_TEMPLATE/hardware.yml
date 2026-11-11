@@ -1,0 +1,62 @@
+name: 硬件或烧录问题
+description: 串口识别、供电、TF 卡、摄像头、音频等硬件相关问题
+title: "[HW] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        这块板子**没有 USB 转串口桥片**，串口就是 ESP32-S3 原生的 USB-Serial-JTAG。
+        设备深睡后串口会消失，这是设计行为，不是故障。
+
+  - type: dropdown
+    id: symptom
+    attributes:
+      label: 现象
+      options:
+        - 电脑识别不到串口
+        - 串口能识别但无日志输出
+        - 烧录失败或反复进入下载模式
+        - TF 卡挂载失败（0x107 等）
+        - 摄像头无图像
+        - 音频无声或异常
+        - 无法进入深睡 / 深睡后无法唤醒
+        - 其他
+    validations:
+      required: true
+
+  - type: dropdown
+    id: power
+    attributes:
+      label: 供电方式
+      options:
+        - USB 供电
+        - 锂电池
+        - 其他
+    validations:
+      required: true
+
+  - type: input
+    id: tfcard
+    attributes:
+      label: TF 卡型号与容量
+      description: 若与存储相关请填写
+      placeholder: SanDisk 32GB / FAT32
+    validations:
+      required: false
+
+  - type: textarea
+    id: detail
+    attributes:
+      label: 详细描述
+      description: 现象、出现频率、已尝试过的排查手段
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 串口日志
+      render: shell
+    validations:
+      required: false
