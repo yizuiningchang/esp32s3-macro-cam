@@ -28,6 +28,12 @@
 
 微雪 **ESP32-S3-CAM-OV5640** 开发板。
 
+<p align="center">
+  <img src="docs/images/board.jpg" alt="ESP32-S3-CAM-OV5640 开发板" width="520">
+  <br>
+  <sub>产品图来源：Waveshare 官方</sub>
+</p>
+
 | 部件 | 规格 |
 |---|---|
 | 主控 | ESP32-S3R8，双核 240 MHz，8 MB PSRAM（Octal 80 MHz），16 MB Flash |
